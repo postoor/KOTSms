@@ -1,0 +1,19 @@
+{
+    "name": "postoor/kotsms",
+    "description": "KOT SMS API Library",
+    "type": "library",
+    "authors": [{
+        "name": "postoor",
+        "email": "lksdub@404nofound.com"
+    }],
+    "minimum-stability": "dev",
+    "require": {
+        "wixel/gump": "v1.11.0",
+        "guzzlehttp/guzzle": "^6.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "postoor\\KOTSms\\": "src"
+        }
+    }
+}
