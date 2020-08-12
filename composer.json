@@ -6,6 +6,7 @@
         "name": "postoor",
         "email": "lksdub@404nofound.com"
     }],
+    "license": "MIT",
     "minimum-stability": "dev",
     "require": {
         "wixel/gump": "v1.11.0",
