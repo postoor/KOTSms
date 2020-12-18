@@ -170,22 +170,14 @@ class Sms
         $client = new Client();
         $response = $client->request(
             'GET',
-            $this->url.$this->pointUri.'?'.http_build_query(['kmsgid' => $kmsgid, 'username' => $this->username, 'password' => $this->password])
+            $this->url.$this->statusUri.'?'.http_build_query(['kmsgid' => $kmsgid, 'username' => $this->username, 'password' => $this->password])
         );
 
         if ($response->getStatusCode() != 200) {
             throw new \Exception('Connected Failed');
         }
-        $body = (string) $response->getBody();
-        if (is_numeric($body)) {
-            if ($body == 0) {
-                throw new \Exception('SMS not Exists');
-            }
 
-            throw new \Exception($this->getMessageByCode($body));
-        }
-
-        parse_str(trim($body), $responseData);
+        parse_str(trim($response->getBody()), $responseData);
 
         if (!isset($responseData['statusstr'])) {
             throw new \Exception('Bad Response');
