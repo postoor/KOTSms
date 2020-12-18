@@ -33,3 +33,43 @@ echo $kmsGID;
 | vldtime  | Validity Period   | 1800 ~ 28800 |                        |
 | response | Callback Link     |              |                        |
 | Ftcode   | Verification Code | 36           |                        |
+
+### Get User Point
+
+```php
+use postoor\KOTSms\Sms;
+
+$sms = new Sms('username', 'password');
+$point = $sms->getPoint();
+
+echo $point;
+
+```
+
+#### Request Data
+
+| Key      | Desc.    | Max | Note     |
+| -------- | -------- | --- | -------- |
+| username | Username |     | required |
+| password | Password |     | required |
+
+
+### Get Sms Status
+
+```php
+use postoor\KOTSms\Sms;
+
+$sms = new Sms('username', 'password');
+$status = $sms->getSMSStatus(198987);
+
+echo $status;
+
+```
+
+#### Request Data
+
+| Key      | Desc.    | Max | Note     |
+| -------- | -------- | --- | -------- |
+| username | Username |     | required |
+| password | Password |     | required |
+| kmsgid   | kmsgid   |     | required |
