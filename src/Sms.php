@@ -13,10 +13,16 @@ class Sms
 
     protected $url;
 
+    protected $smsUri = '/kotsmsapi-1.php';
+
+    protected $pointUri = '/memberpoint.php';
+
+    protected $statusUri = '/msgstatus.php';
+
     public function __construct(
         $username,
         $password,
-        $url = 'https://api2.kotsms.com.tw/kotsmsapi-1.php'
+        $url = 'https://api2.kotsms.com.tw'
     ) {
         $this->username = $username;
 
@@ -45,7 +51,7 @@ class Sms
             'Ftcode' => null,
         ];
 
-        $params = array_merge($defaultParams, $options);
+        $params = array_merge($defaultParams, $options, ['username' => $this->username, 'password' => $this->password]);
         $params['dstaddr'] = $target;
         $params['smbody'] = mb_convert_encoding($message, 'BIG5', 'auto');
 
@@ -55,19 +61,17 @@ class Sms
             throw new \Exception('Validate Failed');
         }
 
-        $queryParams = [];
         foreach ($params as $key => $value) {
             if ($value == null) {
                 unset($params[$key]);
                 continue;
             }
-            $queryParams[] = "{$key}={$value}";
         }
 
         $client = new Client();
         $response = $client->request(
             'GET',
-            $this->url."?username={$this->username}&password={$this->password}&".implode('&', $queryParams)
+            $this->url.$this->smsUri.'?'.http_build_query($params)
         );
 
         if ($response->getStatusCode() != 200) {
@@ -134,11 +138,51 @@ class Sms
         return $codeMsgMap[$code] ?? '未定義錯誤';
     }
 
-    /**
-     * @TODO: Process KOT SMS response status
-     */
-    public function callback()
+    public function getPoint()
     {
-        // code...
+        $client = new Client();
+        $response = $client->request(
+            'GET',
+            $this->url.$this->pointUri.'?'.http_build_query(['username' => $this->username, 'password' => $this->password])
+        );
+
+        if ($response->getStatusCode() != 200) {
+            throw new \Exception('Connected Failed');
+        }
+        $point = (int) trim($response->getBody());
+
+        if ($point === null) {
+            throw new \Exception('No Response');
+        }
+
+        if ($point < 0) {
+            throw new \Exception($this->getMessageByCode($point));
+        }
+
+        return $point;
+    }
+
+    /**
+     * Check SMS Status.
+     */
+    public function getSMSStatus($kmsgid)
+    {
+        $client = new Client();
+        $response = $client->request(
+            'GET',
+            $this->url.$this->statusUri.'?'.http_build_query(['kmsgid' => $kmsgid, 'username' => $this->username, 'password' => $this->password])
+        );
+
+        if ($response->getStatusCode() != 200) {
+            throw new \Exception('Connected Failed');
+        }
+
+        parse_str(trim($response->getBody()), $responseData);
+
+        if (!isset($responseData['statusstr'])) {
+            throw new \Exception('Bad Response');
+        }
+
+        return $responseData['statusstr'];
     }
 }
