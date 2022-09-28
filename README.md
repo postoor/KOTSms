@@ -1,6 +1,4 @@
-# KOTSms
-
-## 簡訊王 unofficial sdk
+# 簡訊王 unofficial sdk
 
 ### Send SMS
 
